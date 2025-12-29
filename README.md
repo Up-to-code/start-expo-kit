@@ -1,50 +1,164 @@
-# Welcome to your Expo app 👋
+# Start Expo Kit
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern Expo app with Better Auth integration, connected to the [start-kit](https://github.com/Up-to-code/start-kit) Next.js backend.
 
 ## Get started
 
-1. Install dependencies
+- 🔐 **Complete Authentication System**
+  - Email/password authentication
+  - Social authentication (Google, etc.)
+  - Protected routes with auto-redirect
+  - Session management with SecureStore
+- 🎨 **Organized Structure**
+  - Route groups: `(auth)` and `(home)`
+  - Custom hooks: `useAuth`, `useSession`
+  - Reusable auth components
+  - Clean folder organization
+- 🚀 **Modern Stack**
+  - Expo Router for file-based routing
+  - Better Auth for authentication
+  - TypeScript for type safety
+  - React Native with Expo
 
-   ```bash
-   npm install
-   ```
+## 📋 Prerequisites
 
-2. Start the app
+- Node.js 18+ or Bun
+- MongoDB database (configured in start-kit backend)
+- [Start-kit backend](https://github.com/Up-to-code/start-kit) running
 
-   ```bash
-   npx expo start
-   ```
+## 🛠️ Quick Start
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Install Dependencies
 
 ```bash
-npm run reset-project
+bun install
+# or
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Set Up Environment Variables
 
-## Learn more
+Create a `.env` file in the root:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+EXPO_PUBLIC_AUTH_URL=http://localhost:3000
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+For physical devices, use your computer's local IP:
+```bash
+EXPO_PUBLIC_AUTH_URL=http://192.168.1.100:3000
+```
 
-## Join the community
+### 3. Configure Start-Kit Backend
 
-Join our community of developers creating universal apps.
+See [SETUP.md](./SETUP.md) for detailed backend configuration instructions.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 4. Start the App
+
+```bash
+bun start
+# or
+npm start
+```
+
+Then:
+- Press `a` for Android
+- Press `i` for iOS
+- Press `w` for web
+- Scan QR code for Expo Go
+
+## 📁 Project Structure
+
+```
+app/
+├── (auth)/              # Authentication screens
+│   ├── sign-in.tsx
+│   ├── sign-up.tsx
+│   └── social-sign-in.tsx
+├── (home)/              # Protected screens
+│   ├── index.tsx
+│   └── profile.tsx
+└── _layout.tsx
+
+lib/
+├── auth/
+│   └── client.ts        # Auth client config
+└── utils.ts
+
+hooks/
+├── use-auth.ts          # Auth operations
+└── use-session.ts       # Session management
+
+components/
+└── auth/
+    ├── auth-wrapper.tsx  # Route protection
+    └── auth-form.tsx     # Reusable form
+```
+
+## 🔑 Authentication
+
+### Using the Auth Hook
+
+```typescript
+import { useAuth } from "@/hooks/use-auth";
+
+function MyComponent() {
+  const { user, isAuthenticated, signIn, signOut } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Text>Please sign in</Text>;
+  }
+
+  return <Text>Welcome, {user?.name}!</Text>;
+}
+```
+
+### Using the Session Hook
+
+```typescript
+import { useSession } from "@/hooks/use-session";
+
+function MyComponent() {
+  const { session, user, isPending } = useSession();
+
+  if (isPending) return <Text>Loading...</Text>;
+
+  return <Text>Email: {user?.email}</Text>;
+}
+```
+
+### Protected Routes
+
+Routes in `(home)` are automatically protected. The `AuthWrapper` component handles redirects based on authentication status.
+
+## 📚 Documentation
+
+- [SETUP.md](./SETUP.md) - Complete setup guide
+- [Better Auth Docs](https://www.better-auth.com/docs)
+- [Expo Router Docs](https://docs.expo.dev/router/introduction/)
+
+## 🐛 Troubleshooting
+
+See [SETUP.md](./SETUP.md) for troubleshooting guide.
+
+## 📝 Scripts
+
+```bash
+bun start          # Start Expo dev server
+bun android        # Start on Android
+bun ios            # Start on iOS
+bun web            # Start on web
+bun lint           # Run ESLint
+```
+
+## 🤝 Contributing
+
+Contributions welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+MIT License
+
+---
+
+Built with ❤️ using Expo and Better Auth
