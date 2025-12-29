@@ -1,8 +1,8 @@
 import { Button } from "@/components/shared/Button";
 import { Container } from "@/components/shared/Container";
 import { Input } from "@/components/shared/Input";
+import { authClient } from "@/lib/auth/client";
 import { isValidEmail } from "@/lib/utils";
-import { useAuthStore } from "@/stores/auth-store";
 import { Link } from "expo-router";
 import { useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -10,10 +10,9 @@ import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableO
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const passwordInputRef = useRef<TextInput>(null);
-
-  const { login, isLoading } = useAuthStore();
 
   const handleSubmit = async () => {
     setError(null);
@@ -28,12 +27,15 @@ export default function SignInScreen() {
       return;
     }
 
-    const result = await login(email, password);
+    setIsLoading(true);
+
+    const result = await authClient.signIn.email({ email, password });
 
     if (result.error) {
       setError(result.error.message || "Failed to sign in");
+      setIsLoading(false);
     }
-    // Store will handle navigation after successful sign-in
+    // Layout will handle redirect after successful sign-in
   };
 
   return (

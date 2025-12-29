@@ -1,8 +1,8 @@
 import { Button } from "@/components/shared/Button";
 import { Container } from "@/components/shared/Container";
 import { Input } from "@/components/shared/Input";
+import { authClient } from "@/lib/auth/client";
 import { isValidEmail, validateName, validatePassword } from "@/lib/utils";
-import { useAuthStore } from "@/stores/auth-store";
 import { Link, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -12,12 +12,11 @@ export default function SignUpScreen() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
-
-  const { signup, isLoading } = useAuthStore();
 
   const handleSubmit = async () => {
     setError(null);
@@ -39,12 +38,15 @@ export default function SignUpScreen() {
       return;
     }
 
-    const result = await signup(email, password, name);
+    setIsLoading(true);
+
+    const result = await authClient.signUp.email({ email, password, name });
 
     if (result.error) {
       setError(result.error.message || "Failed to sign up");
+      setIsLoading(false);
     }
-    // Store will handle navigation after successful sign-up
+    // Layout will handle redirect after successful sign-up
   };
 
   return (

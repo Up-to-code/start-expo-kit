@@ -3,18 +3,23 @@ import { Card } from "@/components/shared/Card";
 import { Container } from "@/components/shared/Container";
 import { Header } from "@/components/shared/Header";
 import { LoadingScreen } from "@/components/shared/LoadingScreen";
-import { useAuthStore } from "@/stores/auth-store";
+import { authClient } from "@/lib/auth/client";
 import { ScrollView, Text, View } from "react-native";
 
 export default function ProfileScreen() {
-  const { user, logout, isLoading } = useAuthStore();
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
 
   const handleSignOut = async () => {
-    await logout();
-    // Store will handle navigation to sign-in
+    await authClient.signOut();
+    // No router.replace needed - layout will handle redirect
   };
 
-  if (isLoading || !user) {
+  if (isPending) {
+    return <LoadingScreen />;
+  }
+
+  if (!user) {
     return <LoadingScreen />;
   }
 

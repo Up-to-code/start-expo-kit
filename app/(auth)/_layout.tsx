@@ -1,11 +1,14 @@
-import { useAuthStore } from '@/stores/auth-store';
+import { authClient } from '@/lib/auth/client';
 import { Redirect, Stack } from 'expo-router';
+import { useMemo } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 export default function AuthLayout() {
-  const { isAuthenticated, isInitialized } = useAuthStore();
+  const { data: session, isPending } = authClient.useSession();
 
-  if (!isInitialized) {
+  const isAuthenticated = useMemo(() => !!session?.user, [session?.user]);
+
+  if (isPending) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
         <ActivityIndicator size="large" color="#007AFF" />
